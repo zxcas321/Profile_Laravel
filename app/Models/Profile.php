@@ -25,4 +25,20 @@ class Profile extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function experiences()
+    {
+        return $this->hasMany(Experience::class);
+    }
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+    public function skills()
+    {
+        return $this->hasMany(Skill::class);
+    }
+    public function Educations()
+    {
+        return $this->hasMany(Education::class);
+    }
 }

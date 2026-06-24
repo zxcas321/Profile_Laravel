@@ -29,28 +29,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function profile()
+    public function profiles()
     {
-        return $this->hasOne(Profile::class);
-    }
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class);
-    }
-
-    public function skills()
-    {
-        return $this->hasMany(Skill::class);
-    }
-
-    public function experiences()
-    {
-        return $this->hasMany(Experience::class);
-    }
-
-    public function educations()
-    {
-        return $this->hasMany(Education::class);
+        return $this->hasMany(Profile::class);
     }
 }

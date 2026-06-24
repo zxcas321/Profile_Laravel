@@ -22,69 +22,64 @@ return new class extends Migration
 
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('tagline')->nullable();
-            $table->text('bio')->nullable();
-            $table->string('photo_url')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('location')->nullable();
-            $table->string('github_url')->nullable();
-            $table->string('linkedin_url')->nullable();
-            $table->string('website_url')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->text('bio');
+            $table->string('photo_url');
+            $table->string('phone');
+            $table->string('location');
+            $table->string('github_url');
+            $table->string('linkedin_url');
+            $table->string('website_url');
             $table->timestamps();
         });
 
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('category')->nullable(); // e.g. Frontend, Backend, DevOps
-            $table->unsignedTinyInteger('proficiency')->default(3); // 1–5
-            $table->string('icon_url')->nullable();
+            $table->foreignId('project_id')->constrained('profiles')->onDelete('cascade');
+            $table->string('skill');
             $table->timestamps();
         });
 
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('profiles')->onDelete('cascade');
             $table->string('title');
-            $table->text('description')->nullable();
-            $table->string('demo_url')->nullable();
-            $table->string('github_url')->nullable();
-            $table->string('thumbnail_url')->nullable();
+            $table->text('description');
+            $table->string('github_url');
+            $table->string('thumbnail_url');
             $table->boolean('is_featured')->default(false);
-            $table->date('started_at')->nullable();
-            $table->date('ended_at')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('project_images', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->string('image_url');
-            $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });
 
         Schema::create('project_skills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->foreignId('skill_id')->constrained()->onDelete('cascade');
- 
+            $table->foreignId('project_id')->constrained("projects")->onDelete('cascade');
+            $table->foreignId('skill_id')->constrained("skills")->onDelete('cascade');
+            $table->timestamps();
             $table->unique(['project_id', 'skill_id']);
         });
 
         Schema::create('educations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('profile_id')->constrained('profiles')->onDelete('cascade');
             $table->string('institution');
-            $table->string('degree')->nullable();
-            $table->string('field_of_study')->nullable();
-            $table->date('started_at')->nullable();
-            $table->date('ended_at')->nullable();
-            $table->string('grade')->nullable();
-            $table->text('description')->nullable();
+            $table->string('degree');
+            $table->string('field')->nullable();
+            $table->date('started_at');
+            $table->date('ended_at');
+            $table->text('description');
             $table->timestamps();
+        });
+
+        Schema::create('experiences', function(Blueprint $table) {
+            $table->id();
+            $table->foreignId('profile_id')->constrained('profiles')->onDelete('cascade');
+            $table->string('company');
+            $table->string('position');
+            $table->text('description');
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->boolean('is_current')->default(true);
         });
 
     }
@@ -98,7 +93,6 @@ return new class extends Migration
         Schema::dropIfExists('profiles');
         Schema::dropIfExists('skills');
         Schema::dropIfExists('projects');
-        Schema::dropIfExists('project_images');
         Schema::dropIfExists('project_skills');
         Schema::dropIfExists('experiences');
         Schema::dropIfExists('educations');

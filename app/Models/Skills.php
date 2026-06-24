@@ -10,29 +10,17 @@ class Skill extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'name',
-        'category',
-        'proficiency',
-        'icon_url',
+        'project_id',
+        'skill'
     ];
 
-    protected function casts(): array
+    public function profiles()
     {
-        return [
-            'proficiency' => 'integer',
-        ];
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Profile::class);
     }
 
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_skills')
-                    ->using(ProjectSkill::class)
-                    ->withPivot('id');
+        return $this->belongsToMany(Project::class, 'project_skills');
     }
 }
