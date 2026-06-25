@@ -66,7 +66,7 @@ class UserService
         }
     }
 
-    public function delete(int $id)
+    public function destroy(int $id)
     {
         try{
             $user = User::find('id', $id);

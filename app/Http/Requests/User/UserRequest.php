@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,11 +14,18 @@ class UserRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'name'  => ['required', 'string'],
-            'email' => ['required', 'string', 'unique:users,email'. $this->id],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string', 'min:8']
-            ];
+        ];
+        
+        if ($this->getMethod() === 'PUT' || $this->getMethod() === 'PATCH') {
+            $rules['email'] = ['required', 'string', 'email', 'unique:users,email,' . $this->route('user')];
+            $rules['password'] = ['nullable', 'string', 'min:8'];
+        }
+
+        return $rules;
     }
 
     public function failedValidation(Validator $validator)

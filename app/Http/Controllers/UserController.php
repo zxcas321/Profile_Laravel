@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\UserRequest;
@@ -11,18 +10,27 @@ class UserController
 {
     public function __construct(
         protected UserService $service
-    ){}
+    ) {}
 
     public function index()
     {
-        $index = $this->service->index();
-        return UserResource::collection($index);
+        $users = $this->service->index();
+        return UserResource::collection($users);
     }
 
-    public function getId(int $id)
+    public function show(int $id)
     {
-        $index = $this->service->findId($id);
-        return UserResource::collection($index);
+        $user = $this->service->findId($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => new UserResource($user),
+        ]);
     }
 
     public function store(UserRequest $request)
@@ -34,34 +42,52 @@ class UserController
                 'message' => 'User created success',
                 'data'    => new UserResource($user),
             ], 201);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
-            ]);
+            ], 500);
         }
     }
 
     public function update(int $id, UserRequest $request)
     {
-        try{
+        try {
             $user = $this->service->update($id, $request->validated());
-
             if (!$user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User not found',
                 ], 404);
             }
-
             return response()->json([
                 'success' => true,
                 'message' => 'User updated successfully',
                 'data' => new UserResource($user),
             ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
-        } catch (\Exception $e) {
+    public function destroy(int $id)
+    {
+        try {
+            $result = $this->service->destroy($id);
+            if (!$result) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found',
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'User deleted successfully',
+            ]);
+        } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

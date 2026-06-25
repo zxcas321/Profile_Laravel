@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -35,14 +36,14 @@ return new class extends Migration
 
         Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('profiles')->onDelete('cascade');
+            $table->foreignId('profile_id')->constrained('profiles')->onDelete('cascade');
             $table->string('skill');
             $table->timestamps();
         });
 
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('profiles')->onDelete('cascade');
+            $table->foreignId('profile_id')->constrained('profiles')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
             $table->string('github_url');
@@ -80,6 +81,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->boolean('is_current')->default(true);
+            $table->timestamps();
         });
 
     }
